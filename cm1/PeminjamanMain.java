@@ -2,7 +2,7 @@ package cm1;
 
 import java.util.Scanner;
 
-public class PeminjamanDemo {
+public class PeminjamanMain {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
@@ -35,6 +35,9 @@ public class PeminjamanDemo {
             System.out.println("3. Tampilkan Peminjaman");
             System.out.println("4. Urutkan Berdasarkan Denda");
             System.out.println("5. Cari Berdasarkan NIM");
+            System.out.println("6. Tambahkan Data Peminjaman");
+            System.out.println("7. Tampilkan Statistik");
+            System.out.println("8. Laporan Per Mahasiswa");
             System.out.println("0. Keluar");
             System.out.print("Pilih: ");
             pilihan = sc.nextInt();
@@ -64,7 +67,7 @@ public class PeminjamanDemo {
                     System.out.println();
                     break;
                 case 4:
-                    System.out.println("Setelah diurutkan (Denda terbesar): ");
+                    System.out.println("Setelah diurutkan dengan Insertion Sort (Denda terbesar): ");
                     Peminjaman.sortDenda(peminjaman);
                     for (Peminjaman p : peminjaman) {
                         p.tampilPeminjaman();
@@ -74,12 +77,59 @@ public class PeminjamanDemo {
                 case 5:
                     System.out.print("Masukkan NIM: ");
                     String find = sc.nextLine();
-                    Peminjaman.sortNIM(peminjaman);
-                    int index = Peminjaman.binarySearchNIM(peminjaman, find);
+                    Peminjaman[] copy = peminjaman.clone();
+                    Peminjaman.sortNIM(copy);
+                    int index = Peminjaman.binarySearchNIM(copy, find);
                     if (index != -1) {
-                        peminjaman[index].tampilPeminjaman();
+                        System.out.println("[Binary Search] Data ditemukan: ");
+                        int left = index;
+                        while (left > 0 && copy[left - 1].mhs.nim.equals(find)) {
+                            left--;
+                        }
+                        int right = index;
+                        while (right < copy.length - 1 && copy[right + 1].mhs.nim.equals(find)) {
+                            right++;
+                        }
+                        for (int i = left; i <= right; i++) {
+                            copy[i].tampilPeminjaman();
+                        }
                     } else {
                         System.out.println("Data peminjaman untuk NIM " + find + " tidak ditemukan.");
+                    }
+                    System.out.println();
+                    break;
+                    case 6:
+                        peminjaman = Peminjaman.tambahData(peminjaman, mahasiswa, buku, sc);
+                        break;
+                case 7:
+                    int totalDenda = 0;
+                    int jmlTerlambat = 0;
+                    int tepat = 0;
+
+                    for (Peminjaman p : peminjaman) {
+                        totalDenda += p.denda;
+                        if (p.terlambat > 0) {
+                            jmlTerlambat++;
+                        } else {
+                            tepat++;
+                        }
+                    }
+
+                    System.out.println("=== STATISTIK PEMINJAMAN ===");
+                    System.out.println("Total Denda Keseluruhan: " + totalDenda);
+                    System.out.println("Jumlah Peminjaman Terlambat: " + jmlTerlambat);
+                    System.out.println("Jumlah Peminjaman Tepat Waktu: " + tepat);
+                    System.out.println();
+                    break;
+                case 8:
+                    LaporanMahasiswa[] laporan = new LaporanMahasiswa[mahasiswa.length];
+                    for (int i = 0; i < mahasiswa.length; i++) {
+                        laporan[i] = new LaporanMahasiswa(mahasiswa[i]);
+                        laporan[i].hitungLaporan(peminjaman);
+                    }
+                    System.out.println("=== LAPORAN PER MAHASISWA ===");
+                    for (LaporanMahasiswa l : laporan) {
+                        l.tampilLaporan();
                     }
                     System.out.println();
                     break;

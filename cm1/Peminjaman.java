@@ -1,5 +1,7 @@
 package cm1;
 
+import java.util.Scanner;
+
 public class Peminjaman {
     Mahasiswa mhs;
     Buku buku;
@@ -69,5 +71,46 @@ public class Peminjaman {
             }
         }
         return -1;
+    }
+
+    static Peminjaman[] tambahData(Peminjaman[] asli, Mahasiswa[] mahasiswa, Buku[] buku, Scanner sc) {
+        System.out.print("Masukkan NIM: ");
+        String nim = sc.nextLine();
+        Mahasiswa mhs = null;
+        for (Mahasiswa m : mahasiswa) {
+            if (m.nim.equals(nim)) {
+                mhs = m;
+                break;
+            }
+        }
+        if (mhs == null) {
+            System.out.println("NIM tidak ditemukan!");
+            System.out.println();
+            return asli;
+        }
+        System.out.print("Masukkan Kode Buku: ");
+        String kode = sc.nextLine();
+        Buku bk = null;
+        for (Buku b : buku) {
+            if (b.kodeBuku.equals(kode)) {
+                bk = b;
+                break;
+            }
+        }
+        if (bk == null) {
+            System.out.println("Kode buku tidak ditemukan!");
+            System.out.println();
+            return asli;
+        }
+        System.out.print("Masukkan Lama Pinjam: ");
+        int lama = sc.nextInt();
+        sc.nextLine(); 
+        Peminjaman baru = new Peminjaman(mhs, bk, lama);
+        Peminjaman[] pinjamBaru = new Peminjaman[asli.length + 1];
+        System.arraycopy(asli, 0, pinjamBaru, 0, asli.length);
+        pinjamBaru[asli.length] = baru;
+        System.out.println("Data Berhasil disimpan!");
+        System.out.println();
+        return pinjamBaru;
     }
 }
